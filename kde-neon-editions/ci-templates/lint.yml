@@ -1,8 +1,9 @@
 # Reusable lint job templates
 # Include this in any edition repo with:
 #   include:
-#     - project: 'openos-project/kde-ecosystem-deving/neon-deving/ci-templates'
-#       file: '/lint.yml'
+#     - project: 'openos-project/kde-ecosystem-deving/neon-deving/kde-neon-editions'
+#       ref: main
+#       file: '/ci-templates/lint.yml'
 
 # ── Manifest validation ───────────────────────────────────────────────────────
 

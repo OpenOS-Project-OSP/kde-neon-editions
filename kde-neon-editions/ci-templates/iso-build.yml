@@ -1,8 +1,9 @@
 # Reusable ISO build job template
 # Include this in any edition repo with:
 #   include:
-#     - project: 'openos-project/kde-ecosystem-deving/kde-groups/neon/ci-templates'
-#       file: '/iso-build.yml'
+#     - project: 'openos-project/kde-ecosystem-deving/neon-deving/kde-neon-editions'
+#       ref: main
+#       file: '/ci-templates/iso-build.yml'
 
 .iso-build-base:
   stage: build-iso

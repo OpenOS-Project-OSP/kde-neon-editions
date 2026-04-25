@@ -6,10 +6,10 @@ include:
   - project: 'openos-project/kde-ecosystem-deving/neon-deving/kde-neon-editions'
     ref: main
     file:
-      - '/kde-neon-editions/ci-templates/iso-build.yml'
-      - '/kde-neon-editions/ci-templates/mirror-sync.yml'
-      - '/kde-neon-editions/ci-templates/manifest-validate.yml'
-      - '/kde-neon-editions/ci-templates/lint.yml'
+      - '/ci-templates/iso-build.yml'
+      - '/ci-templates/mirror-sync.yml'
+      - '/ci-templates/manifest-validate.yml'
+      - '/ci-templates/lint.yml'
 
 variables:
   EDITION: "developer-stable"
