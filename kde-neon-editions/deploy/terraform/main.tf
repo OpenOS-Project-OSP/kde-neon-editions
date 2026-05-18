@@ -28,6 +28,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.4"
+    }
   }
 }
 
@@ -176,16 +180,32 @@ locals {
   )
 }
 
+# ── Generic / BYO provider ────────────────────────────────────────────────────
+# Renders cloud-init user-data to a local file so it can be pasted into any
+# provider's console or used in a custom Terraform resource block.
+# No VM is provisioned — see deploy/terraform/providers/generic.tfvars.
+
+resource "local_file" "user_data_rendered" {
+  count    = var.provider_name == "generic" ? 1 : 0
+  filename = "${path.module}/../cloud-init/rendered-user-data.yaml"
+  content  = local.user_data
+}
+
 # ── Outputs ───────────────────────────────────────────────────────────────────
 
 output "vm_ip" {
-  description = "Public IP of the provisioned ISO builder VM"
+  description = "Public IP of the provisioned ISO builder VM (n/a for generic provider)"
   value = (
     var.provider_name == "hetzner"      ? (length(hcloud_server.iso_builder) > 0 ? hcloud_server.iso_builder[0].ipv4_address : "") :
     var.provider_name == "digitalocean" ? (length(digitalocean_droplet.iso_builder) > 0 ? digitalocean_droplet.iso_builder[0].ipv4_address : "") :
     var.provider_name == "aws"          ? (length(aws_instance.iso_builder) > 0 ? aws_instance.iso_builder[0].public_ip : "") :
-    "n/a"
+    "n/a — provision your VM manually and inject cloud-init/rendered-user-data.yaml"
   )
+}
+
+output "user_data_path" {
+  description = "Path to the rendered cloud-init user-data (generic provider only)"
+  value       = var.provider_name == "generic" ? "${path.module}/../cloud-init/rendered-user-data.yaml" : ""
 }
 
 output "runner_name" {
