@@ -11,9 +11,11 @@ VM. Pick whichever path fits your situation — all three produce the same
 ```
 Do you want CI/CD builds (automated, nightly)?
 ├── Yes → Do you have a machine available?
-│         ├── Yes (Linux VM or bare metal) → Path A: register-runner.sh
-│         └── No                           → Path B: Terraform (spin one up)
-└── No  → Path C: local-build.sh (build on your laptop/workstation)
+│         ├── Yes (Linux VM or bare metal)  → Path A: register-runner.sh
+│         └── No — spin one up:
+│               ├── Hetzner / DO / AWS      → Path B: Terraform (supported providers)
+│               └── Any other provider      → Path C: Terraform (generic / BYO)
+└── No  → Path D: local-build.sh (build on your laptop/workstation)
 ```
 
 ---
@@ -133,7 +135,62 @@ No idle cost — spin up for a build run, destroy after.
 
 ---
 
-## Path C — Build locally (no runner, no cloud account)
+## Path C — Provision a VM on any other cloud provider (generic Terraform)
+
+Use this when your provider is not Hetzner, DigitalOcean, or AWS — for
+example Vultr, OVHcloud, Linode/Akamai, Scaleway, Exoscale, UpCloud,
+Azure, GCP, Oracle Cloud, Proxmox, or any KVM/libvirt host.
+
+This mode does not provision a VM. Instead it renders the cloud-init
+user-data to a local file that you inject into your provider's console,
+API, or your own Terraform resource block.
+
+### 1. Get a runner token (same as Path A step 1)
+
+### 2. Configure and render
+
+```bash
+cp deploy/terraform/providers/generic.tfvars deploy/terraform/terraform.tfvars
+```
+
+Edit `deploy/terraform/terraform.tfvars` and set at minimum:
+```hcl
+gitlab_runner_token = "glrt-YOUR-TOKEN-HERE"
+```
+
+Then render the user-data:
+```bash
+terraform -chdir=deploy/terraform init
+terraform -chdir=deploy/terraform apply
+```
+
+This writes `deploy/cloud-init/rendered-user-data.yaml`. No VM is created.
+
+### 3. Provision your VM
+
+Provision a VM on your provider with:
+- **OS:** Ubuntu 22.04+ or Debian 12+ (Ubuntu 24.04 recommended)
+- **CPU:** 4 vCPU minimum
+- **RAM:** 8 GB minimum
+- **Disk:** 40 GB minimum free space
+- **User data:** paste the contents of `rendered-user-data.yaml` into your
+  provider's "user data" / "startup script" / cloud-init field at boot time
+
+The runner installs `live-build` and registers itself with GitLab automatically
+on first boot. It appears in the runners list within ~5 minutes.
+
+### 4. Verify (same as Path A step 3)
+
+### Adding your provider to Terraform (optional)
+
+If you want full `terraform apply` / `terraform destroy` lifecycle management,
+add a resource block for your provider to `deploy/terraform/main.tf` following
+the same pattern as the Hetzner, DigitalOcean, or AWS blocks, and submit a
+merge request.
+
+---
+
+## Path D — Build locally (no runner, no cloud account)
 
 Build an ISO directly on your workstation or laptop. No GitLab runner needed.
 The script auto-detects whether native `live-build` is available and falls
@@ -180,7 +237,7 @@ bash deploy/local-build.sh --edition user --dry-run    # print commands only
 
 If no `iso-builder` runner is online, trigger a pipeline with
 `NO_RUNNER=true` to get a job that prints the exact local-build commands
-for that edition:
+for that edition (useful while setting up a runner via Path A, B, or C):
 
 ```
 https://gitlab.com/openos-project/kde-ecosystem-deving/neon-deving/neon-user/-/pipelines/new
