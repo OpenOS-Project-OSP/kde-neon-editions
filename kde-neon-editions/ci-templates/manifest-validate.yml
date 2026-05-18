@@ -7,9 +7,10 @@
   image: ubuntu:noble
   before_script:
     - apt-get update -qq
-    - apt-get install -y --no-install-recommends python3 python3-yaml python3-apt curl
+    - apt-get install -y --no-install-recommends python3 python3-yaml python3-apt curl git
+    - . scripts/bootstrap-scripts.sh
   script:
-    - python3 scripts/validate-manifest.py "manifests/${EDITION}.yaml"
+    - python3 "${SCRIPTS_DIR}/validate-manifest.py" "manifests/${EDITION}.yaml"
   rules:
     - changes:
         - "manifests/${EDITION}.yaml"
