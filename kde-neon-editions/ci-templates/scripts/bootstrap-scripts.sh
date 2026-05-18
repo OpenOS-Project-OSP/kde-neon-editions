@@ -15,9 +15,9 @@ KNE_REPO="https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/openos-project/kde-
 KNE_CLONE="/tmp/kde-neon-editions"
 KNE_SCRIPTS="${KNE_CLONE}/kde-neon-editions/ci-templates/scripts"
 
-if [ -n "${CI_JOB_TOKEN:-}" ] && [ ! -d "${KNE_CLONE}" ]; then
+if [ -n "${CI_JOB_TOKEN:-}" ] && [ ! -d "${KNE_CLONE}" ] && command -v git >/dev/null 2>&1; then
   echo "==> Cloning kde-neon-editions scripts (Option A)"
-  git clone --depth=1 "${KNE_REPO}" "${KNE_CLONE}" 2>/dev/null
+  git clone --depth=1 "${KNE_REPO}" "${KNE_CLONE}" 2>/dev/null || true
 fi
 
 if [ -d "${KNE_SCRIPTS}" ]; then
