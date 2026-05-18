@@ -54,7 +54,7 @@
       echo "==> Linting .gitlab-ci.yml via GitLab API"
       CONTENT=$(cat .gitlab-ci.yml)
       RESPONSE=$(curl -s \
-        --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+        --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
         --header "Content-Type: application/json" \
         --request POST \
         "${CI_API_V4_URL}/ci/lint" \
