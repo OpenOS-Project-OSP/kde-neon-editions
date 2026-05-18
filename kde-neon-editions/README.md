@@ -24,7 +24,7 @@ Neon/stable   ──────────────► neon-developer-stabl
 Neon/unstable ──────────────► neon-developer-unstable → ISO build (allow_failure) → publish
 ```
 
-Upstream mirroring runs on a schedule (every 30 min via GitLab pull mirroring).
+Upstream mirroring runs on a schedule (every 30 min via CI-based sync).
 ISO builds run nightly via a scheduled pipeline on this root repo.
 
 ## Pipelines
@@ -86,11 +86,58 @@ Set these **per project** (or override at group level) when ready:
 
 ### 4. Register a privileged runner
 
-ISO builds require `live-build` with loop devices — must run on a VM runner,
-not a container. Two options:
+ISO builds require `live-build` with loop devices — **must run on a VM or bare
+metal**, not a shared container runner.
 
-- **garm-gitlab (recommended):** auto-scaling Incus VMs. See `deploy/RUNNER-SETUP.md`.
-- **Static runner:** single dedicated build machine. See `deploy/RUNNER-SETUP.md`.
+Four paths are available. Pick the one that fits your situation:
+
+| Path | When to use |
+|---|---|
+| **A — Register any Linux machine** | You already have a VM or bare metal available |
+| **B — Terraform (Hetzner / DO / AWS)** | You want automated provisioning on a supported cloud |
+| **C — Generic / BYO Terraform** | Your cloud provider is not listed (Vultr, OVH, Linode, Azure, GCP, etc.) |
+| **D — Local build** | You want to build ISOs locally without any CI runner |
+
+See [`deploy/RUNNER-SETUP.md`](./deploy/RUNNER-SETUP.md) for full instructions
+on all four paths.
+
+**Quick start for Path A** (existing Linux machine):
+
+```bash
+# 1. Get a runner token from:
+#    https://gitlab.com/groups/openos-project/kde-ecosystem-deving/neon-deving/-/runners/new
+
+# 2. Run the registration script (installs live-build + gitlab-runner, registers runner)
+curl -fsSL \
+  https://gitlab.com/openos-project/kde-ecosystem-deving/neon-deving/kde-neon-editions/-/raw/main/deploy/register-runner.sh \
+  | GITLAB_RUNNER_TOKEN="glrt-YOUR-TOKEN-HERE" sh
+```
+
+**Quick start for Path C** (generic cloud provider):
+
+```bash
+# 1. Get a runner token (same URL as above)
+# 2. Copy and fill in the generic tfvars
+cp deploy/terraform/providers/generic.tfvars deploy/terraform/terraform.tfvars
+# edit terraform.tfvars — set gitlab_runner_token
+
+# 3. Render the cloud-init user-data
+terraform -chdir=deploy/terraform init
+terraform -chdir=deploy/terraform apply
+# → writes deploy/cloud-init/rendered-user-data.yaml
+
+# 4. Provision a VM on your provider and inject the rendered user-data at boot
+#    The runner registers itself automatically on first boot.
+```
+
+**Minimum VM requirements** (all paths):
+
+| Resource | Minimum | Recommended |
+|---|---|---|
+| CPU | 2 vCPU | 4 vCPU |
+| RAM | 6 GB | 8 GB |
+| Disk | 40 GB free | 80 GB (for 2 concurrent builds) |
+| OS | Ubuntu 22.04+ / Debian 12+ | Ubuntu 24.04 Noble |
 
 ### 5. Schedule nightly builds
 
