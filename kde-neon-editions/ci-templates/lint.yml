@@ -57,14 +57,14 @@
         --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
         --header "Content-Type: application/json" \
         --request POST \
-        "${CI_API_V4_URL}/ci/lint" \
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/ci/lint" \
         --data "{\"content\": $(echo "${CONTENT}" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')}")
-      STATUS=$(echo "${RESPONSE}" | grep -o '"status":"[^"]*"' | cut -d'"' -f4)
-      if [ "${STATUS}" = "valid" ]; then
+      VALID=$(echo "${RESPONSE}" | python3 -c "import json,sys; r=json.load(sys.stdin); print(str(r.get('valid',False)).lower())" 2>/dev/null || echo "false")
+      if [ "${VALID}" = "true" ]; then
         echo "    .gitlab-ci.yml is valid"
       else
         echo "    Errors:"
-        echo "${RESPONSE}" | grep -o '"errors":\[[^]]*\]' || echo "${RESPONSE}"
+        echo "${RESPONSE}" | python3 -c "import json,sys; r=json.load(sys.stdin); [print('   ',e) for e in r.get('errors',[])] or print(sys.stdin)" 2>/dev/null || echo "${RESPONSE}"
         exit 1
       fi
   rules:
