@@ -7,7 +7,7 @@
 #
 # Uses CI_JOB_TOKEN to fetch from the internal GitLab group (no PAT needed).
 # Uses GITLAB_TOKEN for push if set; falls back to CI_JOB_TOKEN otherwise.
-# CI_JOB_TOKEN push works for the job's own project without extra configuration.
+# CI_JOB_TOKEN can push to the job's own project without extra setup.
 #
 # Required environment variables:
 #   UPSTREAM_REPO_URL   — e.g. https://gitlab.com/openos-project/kde-ecosystem-deving/kde-groups/neon/neon/seeds.git
@@ -37,10 +37,16 @@ echo "==> Fetching ${UPSTREAM_BRANCH} from kde-groups/neon"
 git remote add upstream "${FETCH_URL}" 2>/dev/null || \
   git remote set-url upstream "${FETCH_URL}"
 
-git fetch upstream "${UPSTREAM_BRANCH}" --depth=50
+# Fetch without depth limit — a shallow fetch cannot be pushed as a new branch
+# to a repo that has no prior history for that ref.
+git fetch upstream "${UPSTREAM_BRANCH}"
 
 echo "==> Updating tracking branch: ${TRACKING_BRANCH}"
 git checkout -B "${TRACKING_BRANCH}" FETCH_HEAD
+
+# Unshallow the working repo so git can push the new branch without the
+# "shallow update not allowed" rejection from the remote.
+git fetch --unshallow origin 2>/dev/null || true
 
 # Push back to origin.
 # Prefer GITLAB_TOKEN (project access token) if set; fall back to CI_JOB_TOKEN.
