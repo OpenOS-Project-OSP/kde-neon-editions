@@ -6,8 +6,7 @@
 # Option B (fallback): use the local scripts/ copies in the edition repo.
 #
 # Usage (source this file, do not execute it):
-#   . "$(dirname "$0")/bootstrap-scripts.sh"   # from local scripts/
-#   . /tmp/bootstrap-scripts.sh                # after curl/wget
+#   . scripts/bootstrap-scripts.sh
 #
 # After sourcing, SCRIPTS_DIR is set and exported.
 
@@ -28,10 +27,16 @@ if [ -d "${KNE_SCRIPTS}" ]; then
   SCRIPTS_DIR="${KNE_SCRIPTS}"
   echo "==> SCRIPTS_DIR (Option A): ${SCRIPTS_DIR}"
 else
-  # Option B: use the scripts/ directory in the edition repo checkout.
-  # Resolve the real path of this script to handle symlinks correctly.
-  _SELF=$(readlink -f "${0}" 2>/dev/null || realpath "${0}" 2>/dev/null || echo "${0}")
-  SCRIPTS_DIR="$(cd "$(dirname "${_SELF}")" && pwd)"
+  # Option B: fall back to the local scripts/ directory in the edition repo.
+  # This file is sourced (not executed), so $0 is the shell binary — not this
+  # script's path. Use CI_PROJECT_DIR when available (GitLab CI sets it
+  # automatically), otherwise assume the caller's working directory is the
+  # repo root.
+  if [ -n "${CI_PROJECT_DIR:-}" ]; then
+    SCRIPTS_DIR="${CI_PROJECT_DIR}/scripts"
+  else
+    SCRIPTS_DIR="$(pwd)/scripts"
+  fi
   echo "==> SCRIPTS_DIR (Option B fallback): ${SCRIPTS_DIR}"
 fi
 
