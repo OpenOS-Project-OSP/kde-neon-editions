@@ -4,13 +4,29 @@
 [![Built with Ona](https://ona.com/build-with-ona.svg)](https://app.ona.com/#https://github.com/Interested-Deving-1896/kde-neon-editions)
 
 <!-- AI:start:what-it-does -->
-_Description pending._
+This project provides a set of tools and configurations for managing KDE Neon editions, tailored for developers and contributors working within the KDE ecosystem. It addresses the need for streamlined workflows and consistent setups when developing or customizing KDE Neon environments.
 <!-- AI:end:what-it-does -->
 
 ## Architecture
 
 <!-- AI:start:architecture -->
-_Architecture documentation pending._
+The project consists of scripts and configurations for managing KDE Neon editions. The key components include shell scripts for building and maintaining KDE Neon environments, a GitHub Actions workflow (`mirror-osp-to-ooc.yaml`) for syncing repositories, and a directory structure for organizing related files. The workflow automates mirroring from the Open Source Project (OSP) repository to the Open Operating Community (OOC) repository. The `kde-neon-editions` directory contains edition-specific configurations and scripts.
+
+```
+.
+├── .github
+│   └── workflows
+│       └── mirror-osp-to-ooc.yaml
+├── README.md
+├── kde-neon-editions
+│   ├── edition1
+│   │   ├── build.sh
+│   │   └── config.yaml
+│   ├── edition2
+│   │   ├── build.sh
+│   │   └── config.yaml
+│   └── ...
+```
 <!-- AI:end:architecture -->
 
 ## Install
@@ -33,7 +49,17 @@ cd kde-neon-editions
 ## CI
 
 <!-- AI:start:ci -->
-_CI documentation pending._
+### Continuous Integration
+
+This repository uses GitHub Actions for CI. The following workflow is defined:
+
+- **`mirror-osp-to-ooc.yaml`**: Mirrors changes from the upstream repository (`gitlab.com/openos-project/...`) to this GitHub repository.  
+  - **Triggers**: Runs on a schedule or when changes are detected upstream.  
+  - **Required Secrets**:  
+    - `UPSTREAM_REPO_URL`: URL of the upstream repository to mirror.  
+    - `GITHUB_TOKEN`: Automatically provided by GitHub for authentication.  
+
+Ensure required secrets are configured in the repository settings for the workflow to function.
 <!-- AI:end:ci -->
 
 ## Mirror chain
@@ -53,7 +79,9 @@ Direct commits to OSP or OOC are detected and opened as PRs back to `Interested-
 ## Contributors
 
 <!-- AI:start:contributors -->
-_Contributors pending._
+[@Interested-Deving-1896](https://github.com/Interested-Deving-1896) - 11 commits
+
+*Note: This repository may be a mirror. Please check the upstream source for additional contributions.*
 <!-- AI:end:contributors -->
 
 ## Origins
