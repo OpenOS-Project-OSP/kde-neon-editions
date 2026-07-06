@@ -4,7 +4,7 @@
 [![Built with Ona](https://ona.com/build-with-ona.svg)](https://app.ona.com/#https://github.com/Interested-Deving-1896/kde-neon-editions)
 
 <!-- AI:start:what-it-does -->
-This project provides a set of tools and configurations for managing KDE Neon editions, focusing on streamlining development and customization within the KDE ecosystem. It is used by developers and contributors working on KDE Neon to maintain consistency and automate workflows, such as mirroring repositories.
+This project provides a collection of KDE Neon editions tailored for specific development and deployment needs. It streamlines the process of managing and customizing KDE Neon environments, primarily for developers and system integrators working within the KDE ecosystem.
 <!-- AI:end:what-it-does -->
 
 ## Architecture
