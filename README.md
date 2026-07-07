@@ -4,7 +4,7 @@
 [![Built with Ona](https://ona.com/build-with-ona.svg)](https://app.ona.com/#https://github.com/Interested-Deving-1896/kde-neon-editions)
 
 <!-- AI:start:what-it-does -->
-This project provides a set of tools and configurations for managing KDE Neon editions, focusing on streamlining development and customization workflows. It is used by developers and contributors working within the KDE ecosystem to maintain and adapt Neon-based distributions.
+This project provides a set of scripts and configurations for managing KDE Neon editions, focusing on streamlining the development and customization of KDE-based environments. It is used by developers and contributors working on KDE Neon or related open-source projects to automate workflows and maintain consistency across builds.
 <!-- AI:end:what-it-does -->
 
 ## Architecture
@@ -77,9 +77,9 @@ Direct commits to OSP or OOC are detected and opened as PRs back to `Interested-
 ## Contributors
 
 <!-- AI:start:contributors -->
-[@Interested-Deving-1896](https://github.com/Interested-Deving-1896): 21 commits
+[@Interested-Deving-1896](https://github.com/Interested-Deving-1896): 22 commits
 
-*Note: This repository may be a mirror. Please check the upstream source for additional details.*
+*Note: This repository may be a mirror. Please check for the upstream source for additional contributions.*
 <!-- AI:end:contributors -->
 
 ## Origins
