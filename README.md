@@ -46,16 +46,13 @@ cd kde-neon-editions
 ## CI
 
 <!-- AI:start:ci -->
-### Continuous Integration
+The repository uses GitHub Actions for continuous integration. 
 
-This repository uses GitHub Actions for CI. The following workflow is defined:
-
-- **mirror-osp-to-ooc.yaml**: Mirrors the repository from the original source (Open Source Project) to an Open Organization Copy. It triggers on a schedule or manual dispatch.  
-  - **Required Secrets**:  
-    - `SOURCE_REPO_TOKEN`: Personal access token for the source repository.  
-    - `TARGET_REPO_TOKEN`: Personal access token for the target repository.  
-
-Ensure the required secrets are configured in the repository settings for the workflow to function correctly.
+- **mirror-osp-to-ooc.yaml**: Syncs the repository with the upstream source at `https://gitlab.com/openos-project/kde-ecosystem-deving/neon-deving/kde-neon-editions`. It triggers on a schedule or manual dispatch.  
+  - **Required secrets**:  
+    - `UPSTREAM_REPO_URL`: URL of the upstream repository.  
+    - `GITLAB_TOKEN`: Personal access token for authenticating with GitLab.  
+    - `GITHUB_TOKEN`: Automatically provided by GitHub for authentication with the repository.
 <!-- AI:end:ci -->
 
 ## Mirror chain
